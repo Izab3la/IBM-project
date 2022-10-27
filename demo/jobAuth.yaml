@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: Job
+
+autozap_strconsts:
+    scanTypeSQLI: "sqli,"
+    scanTypeXSS: "xss,"
+    scanTypePersXSS: "xxs_persistent,"
+    scanTypeReflXSS: "xss_reflected,"
+    none: ""
+
+metadata:
+  name: "Kube-Owasp"
+  labels:
+    app.kubernetes.io/name: "Kube-Owasp"
+    app.kubernetes.io/instance: "RName"
+    app.kubernetes.io/managed-by: "Service"
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: "Kube-Owasp"
+        app.kubernetes.io/instance: "RName"
+    spec:
+      containers:
+        - name: "Kube-Owasp"
+          image: "ictu/zap2docker-weekly"
+          imagePullPolicy: IfNotPresent
+          args:
+            - zap-cli
+            
+            - "~if DEBUG~"
+            - --verbose
+            - "~end~"
+                        
+            - quick-scan
+            - --self-contained
+            - --start-options
+            - '-config api.disablekey=true'
+            
+            - "~if SPIDER~"
+            - --spider
+            - "~end~"
+            
+            - "-s {{ SC_XSS ? scanTypeXSS : none }}{{ SC_SQLI ? scanTypeSQLI : none }}{{ SC_PXSS ? scanTypePersXSS : none }}{{ SC_RXSS ? scanTypeReflXSS : none }}"
+            
+            - "-z {{auth.username=friendlyUsername}}{{auth.password=password}}
+            
+            - "~if RECURSIVE~"
+            - -r
+            - "~end~"
+            
+            - "{{ TARGET }}"
+      restartPolicy: Never
+      volumes:

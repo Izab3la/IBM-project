@@ -1,0 +1,47 @@
+# Default values for kube-owasp.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+imagePullSecrets:
+- name: hofcicd-regcred
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 1
+  #   memory: 2048Mi
+  # requests:
+  #   cpu: 300m
+  #   memory: 512Mi
+
+zapcli:
+  image:
+    repository: owasp/zap2docker-stable
+    tag: 2.8.0
+    pullPolicy: IfNotPresent
+
+  # Verbose information about a scan.
+  debug:
+    enabled: @@DEBUG@@
+
+  # What type of scans should owasp zap do?
+  # - all
+  # - sqli
+  # - xss
+  # - xss_reflected
+  # - xss_persistent
+  scanTypes:
+@@SCANTYPES@@
+
+  # Activates a spider against the host to scan through for vulnerabilities across it's sitemap
+  spider:
+    enabled: @@SPIDER@@
+
+  # Should the scan be recursive
+  recursive:
+    enabled: @@RECURSIVE@@
+
+  # The target host for owasp-zap to scan
+  targetHost: @@TARGET@@
