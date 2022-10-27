@@ -41,8 +41,8 @@ public class InfoPages {
                 node.put("name", n.name());
                 node.put("type", n.getType().name());
                 node.put("friendlyName", n.getFriendlyName());
-                node.put("friendlyUsername", n.getFriendlyUsername());
-                node.put("password", n.getPassword());
+//                node.put("friendlyUsername", n.getFriendlyUsername());
+//                node.put("password", n.getPassword());
                 return node;
             })
             .collect(Collectors.toList())
